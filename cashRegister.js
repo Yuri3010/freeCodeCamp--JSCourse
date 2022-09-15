@@ -11,41 +11,64 @@ function checkCashRegister(price, cash, cid) {
         }
         return sum.toFixed(2);
     }
+
+
     let cidSum = cidSumFunc()
-    console.log(change)
-    for (let counter = 8; counter >= 0; counter--) {
-        const cashValue = [0.01, 0.05, 0.1, 0.25, 1, 5, 10, 20, 100]
-
-        if (change > 0 && cashValue[counter] <= change
-            //&& change % cashValue[counter]
-            //&& cid[counter][1] >= change) 
-        ){
-            changeArr.push([cid[counter][0],
-            change / cashValue[counter] * cashValue[counter]]);
-            change -= change / cashValue[counter] * cashValue[counter];
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
+    //console.log(cidSum)
+    //console.log(cidSum % change)
     if (change > cidSum) {
         object = { status: "INSUFFICIENT_FUNDS", change: [] };
+        //console.log(object)
+        return object;
     }
 
-    console.log(changeArr)
-    console.log(change)
-    console.log(cidSum)
+    if (change == cidSum) {
+        object = { status: "CLOSED", change: cid };
+        //console.log(object)
+        return object;
+    }
+
+
+    for (let counter = 8; counter >= 0; counter--) {
+        console.log(counter);
+        const cashValue = [0.01, 0.05, 0.1, 0.25, 1, 5, 10, 20, 100]
+
+        console.log(change);
+
+
+        if (cashValue[counter] <= change && cid[counter][1] > 0) {
+
+
+
+            if (change - cid[counter][1] < 0) {
+                let cashCounter = 0
+
+                while (change.toFixed(2) >= cashValue[counter]) {
+                    cashCounter += cashValue[counter]
+                    change -= cashValue[counter]
+                }
+
+                change.toFixed(2);
+                console.log(change);
+                console.log(changeArr)
+                changeArr.push([cid[counter][0], cashCounter])
+
+            } else {
+                changeArr.push([cid[counter][0], cid[counter][1]])
+                change -= cid[counter][1]
+            }
+        }
+
+        if (counter == 0 && change > 0) {
+            return object = { status: "INSUFFICIENT_FUNDS", change: [] };
+        }
+
+
+
+    }
+    object = { status: "OPEN", change: changeArr };
     console.log(object)
-    return change;
+    return object
+
+
 }
-
-
-checkCashRegister(19.5, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
